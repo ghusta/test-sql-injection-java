@@ -1,5 +1,7 @@
 = SQL Injection test in Java
 
+image:https://travis-ci.org/ghusta/test-sql-injection-java.svg?branch=master["Build Status", link="https://travis-ci.org/ghusta/test-sql-injection-java"]
+
 Testing SQL injection in Java.
 
 == References

@@ -41,7 +41,7 @@ public class TestSqlInjectionJavaApplicationTests {
             assertThat(cnx).isNotNull();
             assertThat(cnx.isClosed()).isFalse();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

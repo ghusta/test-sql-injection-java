@@ -1,6 +1,6 @@
 = SQL Injection test in Java
 
-image:https://travis-ci.org/ghusta/test-sql-injection-java.svg?branch=master["Build Status", link="https://travis-ci.org/ghusta/test-sql-injection-java"]
+image:https://github.com/ghusta/test-sql-injection-java/actions/workflows/maven.yml/badge.svg["Build Status", link="https://github.com/ghusta/test-sql-injection-java/actions/workflows/maven.yml"]
 
 Testing SQL injection in Java.
 

@@ -46,6 +46,7 @@ jobs:
 
       - name: OWASP Dependency Check
         run: mvn -ntp org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=7.0
+        continue-on-error: true
 
       - uses: actions/upload-artifact@v3
         with:

@@ -1,13 +1,15 @@
-create table user
+create table "user"
 (
-  id int primary key,
+  id integer,
   name varchar(100) not null,
-  password varchar(100) not null
+  password varchar(100) not null,
+  PRIMARY KEY (id)
 );
 
 create table student
 (
-  id int primary key,
+  id integer,
   name varchar(100) not null,
-  dob date
+  dob date,
+  PRIMARY KEY (id)
 );

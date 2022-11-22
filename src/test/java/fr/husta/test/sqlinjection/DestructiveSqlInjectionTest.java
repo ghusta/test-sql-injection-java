@@ -1,15 +1,15 @@
 package fr.husta.test.sqlinjection;
 
 import org.h2.api.ErrorCode;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import javax.sql.DataSource;
@@ -17,9 +17,9 @@ import javax.sql.DataSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class DestructiveSqlInjectionTest {
+class DestructiveSqlInjectionTest {
 
     private static final Logger log = LoggerFactory.getLogger(DestructiveSqlInjectionTest.class);
 
@@ -30,7 +30,7 @@ public class DestructiveSqlInjectionTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    public void contextLoads() {
+    void contextLoads() {
     }
 
     /**
@@ -39,7 +39,7 @@ public class DestructiveSqlInjectionTest {
      * See also : <a href="https://stackoverflow.com/questions/332365/how-does-the-sql-injection-from-the-bobby-tables-xkcd-comic-work">ref in StackOverflow</a>.
      */
     @Test
-    public void doSqlInjectionWithDropTable() {
+    void doSqlInjectionWithDropTable() {
         // assert table student exists
         int count = JdbcTestUtils.countRowsInTable(jdbcTemplate, "student");
         assertThat(count).isGreaterThan(0);

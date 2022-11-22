@@ -1,5 +1,6 @@
 package fr.husta.test.sqlinjection;
 
+import org.h2.jdbc.JdbcSQLSyntaxErrorException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -47,7 +48,7 @@ class TestSqlInjectionJavaApplicationTests {
 
     @Test
     void selectQuerySpring() {
-        String sql = "select id, name, password from user";
+        String sql = "select id, name, password from \"user\"";
         List<String> results =
                 jdbcTemplate.query(sql,
                         createSingleStringRowMapper());
@@ -59,7 +60,7 @@ class TestSqlInjectionJavaApplicationTests {
     @Test
     void selectQuerySpringWithRestriction() {
         String param = "Donald";
-        String sql = "select id, name, password from user where name = '" + param + "'";
+        String sql = "select id, name, password from \"user\" where name = '" + param + "'";
         List<String> results =
                 jdbcTemplate.query(sql,
                         createSingleStringRowMapper());
@@ -71,19 +72,24 @@ class TestSqlInjectionJavaApplicationTests {
     @Test
     void selectQuerySpringWithRestrictionFailingBecauseNotSanitized() {
         String param = "Dona'ld";
-        String sql = "select id, name, password from user where name = '" + param + "'";
-        assertThatThrownBy(() -> {
+        String sql = "select id, name, password from \"user\" where name = '" + param + "'";
+        Throwable thrown = catchThrowable(() -> {
             List<String> results =
                     jdbcTemplate.query(sql,
                             createSingleStringRowMapper());
 
-        }).hasCauseInstanceOf(BadSqlGrammarException.class);
+        });
+        assertThat(thrown)
+                .isInstanceOf(BadSqlGrammarException.class);
+        Throwable cause = thrown.getCause();
+        assertThat(cause)
+                .isInstanceOf(JdbcSQLSyntaxErrorException.class);
     }
 
     @Test
     void selectQuerySpringWithRestrictionHackedBySqlInjection() {
         String param = "xxx' or '1'='1";
-        String sql = "select id, name, password from user where name = '" + param + "'";
+        String sql = "select id, name, password from \"user\" where name = '" + param + "'";
         List<String> results =
                 jdbcTemplate.query(sql,
                         createSingleStringRowMapper());
@@ -95,7 +101,7 @@ class TestSqlInjectionJavaApplicationTests {
     @Test
     void selectQuerySpringWithRestrictionUsingPreparedStatement() {
         String param = "Donald";
-        String sql = "select id, name, password from user where name = ?";
+        String sql = "select id, name, password from \"user\" where name = ?";
         List<String> results =
                 jdbcTemplate.query(sql, new Object[]{param},
                         createSingleStringRowMapper());
@@ -107,7 +113,7 @@ class TestSqlInjectionJavaApplicationTests {
     @Test
     void selectQuerySpringWithRestrictionUsingPreparedStatementSanitized() {
         String param = "Dona'ld"; // transformed to "Dona''ld"
-        String sql = "select id, name, password from user where name = ?";
+        String sql = "select id, name, password from \"user\" where name = ?";
         List<String> results =
                 jdbcTemplate.query(sql, new Object[]{param},
                         createSingleStringRowMapper());
@@ -120,7 +126,7 @@ class TestSqlInjectionJavaApplicationTests {
     @Test
     void selectQuerySpringWithRestrictionUsingPreparedStatementTryingSqlInjection() {
         String param = "xxx' or '1'='1";
-        String sql = "select id, name, password from user where name = ?";
+        String sql = "select id, name, password from \"user\" where name = ?";
         List<String> results =
                 jdbcTemplate.query(sql, new Object[]{param},
                         createSingleStringRowMapper());
